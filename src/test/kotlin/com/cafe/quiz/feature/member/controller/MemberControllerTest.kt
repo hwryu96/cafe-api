@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.post
 
 @WebMvcTest(controllers = [MemberController::class])
@@ -118,6 +119,19 @@ class MemberControllerTest {
             }.andExpect {
                 status { isBadRequest() }
                 jsonPath("$.message", equalTo("생년월일 패턴이 유효하지 않아요."))
+            }
+    }
+
+    @Test
+    fun `탈퇴시_로그인이_되어있지_않으면_401을_반환한다`() {
+        // given
+        // when & then
+        mockMvc
+            .delete("/api/members/withdraw") {
+                contentType = MediaType.APPLICATION_JSON
+            }.andExpect {
+                status { isUnauthorized() }
+                jsonPath("$.message", equalTo("회원의 정보가 없어요. 먼저 로그인해주세요."))
             }
     }
 }

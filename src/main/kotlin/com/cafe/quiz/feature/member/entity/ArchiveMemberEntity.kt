@@ -8,24 +8,17 @@ import jakarta.persistence.Convert
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
 import jakarta.persistence.Table
-import org.hibernate.annotations.SQLRestriction
-import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.LastModifiedDate
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "member")
-@SQLRestriction("deleted=false")
-class MemberEntity(
+@Table(name = "archive_member")
+class ArchiveMemberEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L,
+    val id: Long,
     @Convert(converter = CryptoConverter::class)
     @Column(name = "name_enc", nullable = false, length = 512)
     val name: String,
@@ -38,18 +31,12 @@ class MemberEntity(
     @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = false, length = 6)
     val gender: GenderType,
-    /**
-     * 삭제 여부는 분리보관 프로세스 처리 전 임시로 사용한다.
-     * 분리보관이 완료 된 경우에는 row 자체가 제거된다.
-     */
-    @Column(name = "deleted", nullable = false)
-    var deleted: Boolean = false,
     @Column(name = "created_at", nullable = false)
-    @CreatedDate
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val createdAt: LocalDateTime,
     @Column(name = "updated_at", nullable = false)
-    @LastModifiedDate
-    var updatedAt: LocalDateTime = LocalDateTime.now(),
+    var updatedAt: LocalDateTime,
+    @Column(name = "archived_at", nullable = false)
+    var archivedAt: LocalDateTime = LocalDateTime.now(),
 ) {
     @Column(name = "name_hash", nullable = false, length = 64)
     @Convert(converter = HashConverter::class)
@@ -65,4 +52,28 @@ class MemberEntity(
         this.nameHash = name
         this.phoneHash = phone
     }
+
+    companion object {
+        fun from(member: MemberEntity): ArchiveMemberEntity =
+            ArchiveMemberEntity(
+                id = member.id,
+                name = member.name,
+                phone = member.phone,
+                birth = member.birth,
+                gender = member.gender,
+                createdAt = member.createdAt,
+                updatedAt = member.updatedAt,
+            )
+    }
+
+    fun toMember() =
+        MemberEntity(
+            id = this.id,
+            name = this.name,
+            phone = this.phone,
+            birth = this.birth,
+            gender = this.gender,
+            createdAt = this.createdAt,
+            updatedAt = this.updatedAt,
+        )
 }

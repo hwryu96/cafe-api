@@ -36,6 +36,17 @@ object ApiStatusCode {
             get() = HttpStatus.BAD_REQUEST
     }
 
+    enum class NotFound(
+        override val code: String,
+        override val message: String,
+    ) : StatusCode {
+        MEMBER_NOT_FOUND("MEMBER_NOT_FOUND", "회원 정보가 존재하지 않아요."),
+        ;
+
+        override val httpStatus: HttpStatus
+            get() = HttpStatus.NOT_FOUND
+    }
+
     enum class ServerError(
         override val code: String,
         override val message: String,
