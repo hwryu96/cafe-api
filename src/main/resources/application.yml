@@ -8,10 +8,16 @@ spring:
       path: /h2-console
 
   datasource:
-    url: jdbc:h2:mem::cafe
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    primary:
+      url: jdbc:h2:mem:cafe
+      driver-class-name: org.h2.Driver
+      username: sa
+      password:
+    archive:
+      url: jdbc:h2:mem:archive-cafe
+      driver-class-name: org.h2.Driver
+      username: sa
+      password:
 
   jackson:
     default-property-inclusion: non_null
