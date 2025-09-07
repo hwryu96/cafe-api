@@ -14,6 +14,17 @@ object ApiStatusCode {
             get() = HttpStatus.OK
     }
 
+    enum class Unauthorized(
+        override val code: String,
+        override val message: String,
+    ) : StatusCode {
+        UNAUTHORIZED("UNAUTHORIZED", "회원의 정보가 없어요. 먼저 로그인해주세요."),
+        ;
+
+        override val httpStatus: HttpStatus
+            get() = HttpStatus.UNAUTHORIZED
+    }
+
     enum class BadRequest(
         override val code: String,
         override val message: String,
