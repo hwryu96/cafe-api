@@ -4,7 +4,9 @@ import com.cafe.quiz.support.const.CafeConstant.BASE_PACKAGE
 import com.cafe.quiz.support.jpa.annotation.ArchiveRepository
 import com.cafe.quiz.support.properties.CustomDataSourceProperties
 import jakarta.persistence.EntityManagerFactory
+import org.hibernate.cfg.AvailableSettings
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
@@ -13,6 +15,7 @@ import org.springframework.context.annotation.FilterType
 import org.springframework.context.annotation.Primary
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.orm.hibernate5.SpringBeanContainer
 import org.springframework.orm.jpa.JpaTransactionManager
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter
@@ -22,6 +25,7 @@ import javax.sql.DataSource
 @EnableJpaAuditing
 class JpaConfiguration(
     private val properties: CustomDataSourceProperties,
+    private val beanFactory: ConfigurableListableBeanFactory,
 ) {
     @Bean("primaryDataSource")
     @Primary
@@ -39,6 +43,13 @@ class JpaConfiguration(
                     setShowSql(true)
                     setGenerateDdl(true)
                 }
+
+            setJpaPropertyMap(
+                mapOf(
+                    AvailableSettings.BEAN_CONTAINER to SpringBeanContainer(beanFactory),
+                ),
+            )
+
             setPackagesToScan(BASE_PACKAGE)
             persistenceUnitName = "primary"
         }
@@ -63,6 +74,13 @@ class JpaConfiguration(
                     setShowSql(true)
                     setGenerateDdl(true)
                 }
+
+            setJpaPropertyMap(
+                mapOf(
+                    AvailableSettings.BEAN_CONTAINER to SpringBeanContainer(beanFactory),
+                ),
+            )
+
             setPackagesToScan(BASE_PACKAGE)
             persistenceUnitName = "archive"
         }
