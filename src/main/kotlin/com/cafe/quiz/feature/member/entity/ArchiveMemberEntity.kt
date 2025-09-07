@@ -93,4 +93,13 @@ class ArchiveMemberEntity(
 
     // 데이터가 파기되지 않았고, 탈퇴 철회 기간이 지나지 않은 경우에만 복구가 가능하다.
     fun canRestore() = !destroyed && !LocalDateTime.now().isAfter(archivedAt.plusDays(CafeConstant.MEMBER_RESTORE_DAYS))
+
+    // 데이터를 파기한다
+    fun destroy() {
+        this.name = null
+        this.phone = null
+        this.birth = null
+
+        destroyed = true
+    }
 }
