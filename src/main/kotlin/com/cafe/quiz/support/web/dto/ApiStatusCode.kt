@@ -41,10 +41,22 @@ object ApiStatusCode {
         override val message: String,
     ) : StatusCode {
         MEMBER_NOT_FOUND("MEMBER_NOT_FOUND", "회원 정보가 존재하지 않아요."),
+        RESTORE_MEMBER_NOT_FOUND("RESTORE_MEMBER_NOT_FOUND", "탈퇴를 철회할 회원의 정보가 존재하지 않아요."),
         ;
 
         override val httpStatus: HttpStatus
             get() = HttpStatus.NOT_FOUND
+    }
+
+    enum class Conflict(
+        override val code: String,
+        override val message: String,
+    ) : StatusCode {
+        RESTORE_WINDOW_EXPIRED("RESTORE_WINDOW_EXPIRED", "탈퇴 철회 가능 기간이 지났어요."),
+        ;
+
+        override val httpStatus: HttpStatus
+            get() = HttpStatus.CONFLICT
     }
 
     enum class ServerError(

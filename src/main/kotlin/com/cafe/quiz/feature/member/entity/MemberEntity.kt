@@ -1,6 +1,7 @@
 package com.cafe.quiz.feature.member.entity
 
 import com.cafe.quiz.feature.member.model.GenderType
+import com.cafe.quiz.support.generator.IdGenerator
 import com.cafe.quiz.support.jpa.converter.CryptoConverter
 import com.cafe.quiz.support.jpa.converter.HashConverter
 import jakarta.persistence.Column
@@ -8,24 +9,19 @@ import jakarta.persistence.Convert
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
 import jakarta.persistence.Table
-import org.hibernate.annotations.SQLRestriction
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import java.time.LocalDateTime
 
 @Entity
 @Table(name = "member")
-@SQLRestriction("deleted=false")
 class MemberEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L,
+    val id: Long = IdGenerator.generate(),
     @Convert(converter = CryptoConverter::class)
     @Column(name = "name_enc", nullable = false, length = 512)
     val name: String,

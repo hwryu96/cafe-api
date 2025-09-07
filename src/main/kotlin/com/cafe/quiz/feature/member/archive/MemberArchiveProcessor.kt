@@ -14,10 +14,6 @@ class MemberArchiveProcessor(
     private val memberEntityRepository: MemberEntityRepository,
     private val archiveMemberEntityRepository: ArchiveMemberEntityRepository,
 ) : ArchiveProcessor {
-    companion object {
-        const val MEMBER_ID_FIELD = "MEMBER_ID"
-    }
-
     override fun process(memberId: Long): ArchiveContext {
         val member =
             memberEntityRepository.findById(memberId).getOrNull()
@@ -26,13 +22,13 @@ class MemberArchiveProcessor(
         archiveMemberEntityRepository.save(ArchiveMemberEntity.from(member))
         memberEntityRepository.delete(member)
 
-        return ArchiveContext().apply {
-            set(MEMBER_ID_FIELD, memberId)
-        }
+        return ArchiveContext(
+            memberId = member.id,
+        )
     }
 
     override fun recover(context: ArchiveContext): ArchiveContext {
-        val memberId = context.get<Long>(MEMBER_ID_FIELD)!!
+        val memberId = context.memberId
         val archived =
             archiveMemberEntityRepository.findById(memberId).getOrNull()
                 ?: throw IllegalStateException("복구 로직 실행 중 문제 발생. 아카이브 된 회원정보 없음. id=$memberId")

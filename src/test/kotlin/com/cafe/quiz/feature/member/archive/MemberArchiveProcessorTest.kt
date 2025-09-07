@@ -93,7 +93,10 @@ class MemberArchiveProcessorTest {
             .whenever(memberRepo)
             .save(any())
 
-        val context = ArchiveContext().apply { set(MemberArchiveProcessor.MEMBER_ID_FIELD, 20L) }
+        val context =
+            ArchiveContext(
+                memberId = 20L,
+            )
 
         // when
         processor.recover(context)
