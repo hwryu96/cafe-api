@@ -97,4 +97,34 @@ class CryptoServiceTest {
         assertThatThrownBy { crypto.decrypt(invalid) }
             .isInstanceOf(IllegalArgumentException::class.java)
     }
+
+    @Test
+    fun `같은_입력은_항상_동일_해시를_반환한다`() {
+        // given
+        val input = "테스트 메시지"
+
+        // when
+        val h1 = crypto.hash(input)
+        val h2 = crypto.hash(input)
+
+        // then
+        assertThat(h1).isNotNull()
+        assertThat(h1).isEqualTo(h2)
+    }
+
+    @Test
+    fun `다른_입력은_서로_다른_해시를_반환한다`() {
+        // given
+        val input1 = "test-1"
+        val input2 = "test-2"
+
+        // when
+        val hash1 = crypto.hash(input1)
+        val hash2 = crypto.hash(input2)
+
+        // then
+        assertThat(hash1).isNotNull()
+        assertThat(hash2).isNotNull()
+        assertThat(hash1).isNotEqualTo(hash2)
+    }
 }

@@ -1,6 +1,7 @@
 package com.cafe.quiz.support.crypto
 
 import org.springframework.stereotype.Component
+import java.security.MessageDigest
 import java.security.SecureRandom
 import java.util.Base64
 import javax.crypto.Cipher
@@ -59,5 +60,14 @@ class CryptoService(
         cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, iv))
         val pt = cipher.doFinal(ct)
         return String(pt, Charsets.UTF_8)
+    }
+
+    fun hash(input: String?): String? {
+        if (input.isNullOrBlank()) {
+            return input
+        }
+
+        val digest = MessageDigest.getInstance("SHA-256").digest(input.toByteArray(Charsets.UTF_8))
+        return digest.joinToString("") { "%02x".format(it) }
     }
 }
