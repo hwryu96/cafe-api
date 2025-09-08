@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 class OrderEntity(
     @Id
     val orderId: Long = IdGenerator.generate(),
-    @Column(name = "product_id", nullable = false)
+    @Column(name = "member_id", nullable = false)
     val memberId: Long,
     @Column(name = "product_id", nullable = false)
     val productId: Long,
