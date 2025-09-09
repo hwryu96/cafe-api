@@ -3,7 +3,6 @@ package com.cafe.quiz.feature.payment.postprocessor
 import com.cafe.quiz.feature.payment.dto.PaymentResult
 import com.cafe.quiz.feature.payment.entity.PaymentEntity
 import com.cafe.quiz.feature.payment.integration.PaymentGateway
-import com.cafe.quiz.feature.payment.model.PaymentGatewayResultCode
 import com.cafe.quiz.feature.payment.model.PaymentStatus
 import com.cafe.quiz.feature.payment.model.PaymentType
 import com.cafe.quiz.feature.payment.repository.PaymentEntityRepository
@@ -19,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * 해당 워커에서 회원 탈퇴 분리 보관 및 데이터 삭제 처리한다.
+ * 대략적인 결제 처리 실패시 플로우를 보인다.
  */
 private val log = KotlinLogging.logger {}
 
@@ -66,30 +65,25 @@ class FailedPaymentPostProcessWorker(
 
         if (!payment.isRetry()) return
 
-        val retryResult =
-            when (result.paymentType) {
-                PaymentType.PAY -> paymentGateway.pay(payment.price)
-                PaymentType.REFUND -> paymentGateway.refund(payment.pgId)
-            }
+        val result = paymentGateway.refund(payment.pgId)
 
-        if (retryResult.resultCode == PaymentGatewayResultCode.SUCCESS ||
-            retryResult.resultCode == PaymentGatewayResultCode.ALREADY_PROCESSED
-        ) {
+        // 결제 요청 실패 건은 결제 취소 내역을 생성한다.
+        if (payment.type == PaymentType.PAY) {
             paymentEntityRepository.save(
                 PaymentEntity(
-                    id = payment.id,
-                    type = payment.type,
+                    type = PaymentType.REFUND,
                     memberId = payment.memberId,
                     orderId = payment.orderId,
                     price = payment.price,
-                    pgId = payment.pgId,
-                    status = PaymentStatus.SUCCESS,
-                    resultCode = PaymentGatewayResultCode.SUCCESS,
+                    pgId = result.pgId,
+                    status = PaymentStatus.from(result.resultCode),
+                    resultCode = result.resultCode,
                 ),
             )
-            log.info { "주문번호: ${payment.orderId}, 재처리 성공! 응답=${retryResult.resultCode}" }
-        } else {
-            log.error { "주문번호: ${payment.orderId}, 재처리 실패! 응답=${retryResult.resultCode}, 수동 확인 필요" }
+        }
+
+        if (!result.isSuccessCode()) {
+            log.error { "주문번호: ${payment.orderId}, 취소처리 실패! 응답=${result.resultCode}, 수동 확인 필요" }
         }
     }
 }

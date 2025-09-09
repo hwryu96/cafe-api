@@ -39,14 +39,14 @@ class PaymentEntity(
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", length = 10, nullable = false)
-    val status: PaymentStatus,
+    var status: PaymentStatus,
     /**
      * 결제 응답 코드
      * 결제 응답 코드는 래핑되어 PaymentResultCode로 반환한다.
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "result_code", length = 10, nullable = false)
-    val resultCode: PaymentGatewayResultCode,
+    var resultCode: PaymentGatewayResultCode,
     @Column(name = "created_at", nullable = false)
     @CreatedDate
     val createdAt: LocalDateTime = LocalDateTime.now(),

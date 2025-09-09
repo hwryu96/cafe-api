@@ -10,4 +10,6 @@ data class PaymentGatewayResult(
     val paymentType: PaymentType,
     val pgId: Long,
     val resultCode: PaymentGatewayResultCode,
-)
+) {
+    fun isSuccessCode() = resultCode == PaymentGatewayResultCode.SUCCESS || resultCode == PaymentGatewayResultCode.ALREADY_PROCESSED
+}
