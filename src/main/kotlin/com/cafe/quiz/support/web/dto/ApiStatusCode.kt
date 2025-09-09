@@ -42,6 +42,7 @@ object ApiStatusCode {
     ) : StatusCode {
         MEMBER_NOT_FOUND("MEMBER_NOT_FOUND", "회원 정보가 존재하지 않아요."),
         RESTORE_MEMBER_NOT_FOUND("RESTORE_MEMBER_NOT_FOUND", "탈퇴를 철회할 회원의 정보가 존재하지 않아요."),
+        ORDER_NOT_FOUND("ORDER_NOT_FOUND", "주문 내역이 존재하지 않아요."),
         ;
 
         override val httpStatus: HttpStatus
@@ -53,6 +54,11 @@ object ApiStatusCode {
         override val message: String,
     ) : StatusCode {
         RESTORE_WINDOW_EXPIRED("RESTORE_WINDOW_EXPIRED", "탈퇴 철회 가능 기간이 지났어요."),
+        REQUEST_IN_PROGRESS("REQUEST_IN_PROGRESS", "이미 처리중이에요, 잠시만 기다려주세요."),
+        CANCEL_NOT_ALLOWED("CANCEL_NOT_ALLOWED", "해당 주문은 취소할 수 없어요."),
+        LIMIT_EXCEEDED("LIMIT_EXCEEDED", "한도가 부족해요. 한도를 확인 후 다시 주문해주세요."),
+        REFUNDABLE_PAYMENT_NOT_FOUND("REFUNDABLE_PAYMENT_NOT_FOUND", "환불 가능한 결제 내역이 존재하지 않아요."),
+        ORDER_FAILED("ORDER_FAILED", "결제가 실패했어요. 잠시 후 다시 시도해주세요."),
         ;
 
         override val httpStatus: HttpStatus

@@ -23,11 +23,15 @@ class OrderEntity(
     val productId: Long,
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", length = 10, nullable = false)
-    val status: OrderStatus = OrderStatus.READY,
+    var status: OrderStatus = OrderStatus.READY,
     @Column(name = "created_at", nullable = false)
     @CreatedDate
     val createdAt: LocalDateTime = LocalDateTime.now(),
     @Column(name = "updated_at", nullable = false)
     @LastModifiedDate
     var updatedAt: LocalDateTime = LocalDateTime.now(),
-)
+) {
+    fun isCancelable() = status == OrderStatus.PAID
+
+    fun isFailed() = status == OrderStatus.FAILED
+}
