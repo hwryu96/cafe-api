@@ -45,7 +45,7 @@ class PaymentEntity(
      * 결제 응답 코드는 래핑되어 PaymentResultCode로 반환한다.
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "result_code", length = 10, nullable = false)
+    @Column(name = "result_code", length = 30, nullable = false)
     var resultCode: PaymentGatewayResultCode,
     @Column(name = "created_at", nullable = false)
     @CreatedDate
